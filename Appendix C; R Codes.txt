@@ -1,0 +1,785 @@
+###########Upload libraries###############
+library(readxl)
+library(lmerTest)
+library(lme4)
+library(afex)
+library(car)
+library(r2glmm)
+library(gam)
+library(mgcv)
+library(devtools)
+library(ggplot2)
+library(sjPlot)
+library(sjmisc)
+library(lavaan)
+library(sjlabelled)
+library(gridExtra)
+library(gapminder)
+library(cowplot)
+library(plotrix)
+library(broom)
+library(car)
+library(r2glmm)
+library(factoextra)
+library(lavaan)
+library(Hmisc)
+library(corrplot)
+library("ggcorrplot")
+library("piecewiseSEM")
+###################################################################################
+######Uploded Dataset provide in sheet 2 of Appendix B(CSV formate recommended##
+######pSEM in Fig. 3a and Table S2#################################################
+
+pSEM3c = psem(
+    lme(AGB~SR+CVD+SdHa+Elev, random = ~1|Foresttype, na.action = na.omit, data = Dataset),
+    lme(SR~SdHa+CVD, random = ~1|Foresttype, na.action = na.omit, data = Dataset),
+    lme(CVD~Elev+SdHa, random = ~1|Foresttype, na.action = na.omit,  data = Dataset),
+    lme(SdHa~Elev, random = ~1|Foresttype, na.action = na.omit, data = Dataset))
+summary(pSEM3c)
+
+########Uploded Dataset provide in sheet 2 of Appendix B(CSV formate recommended##
+########pSEM in Fig. 3b and Table S3################################################
+
+pSEM3c = psem(
+    lme(AGB~CVD+SdHa+Elev, random = ~1|SPP, na.action = na.omit, data = Dataset),
+    lme(CVD~Elev+SdHa, random = ~1|SPP, na.action = na.omit,  data = Dataset),
+    lme(SdHa~Elev, random = ~1|SPP, na.action = na.omit, data = Dataset))
+summary(pSEM3c)
+
+########## SEM Direct & Indirect#####################################################
+#########Uploded Dataset provide in sheet 2 of Appendix B(CSV formate recommended##
+##########The effects of forest types (Fig.S2, Table. S3 to S11)###################
+
+Dataset1 <- Dataset[ which(Dataset$Foresttype =="Dense Pure Conifer Forest"), ]
+
+model1 <- '#regressions
+AGB~SR+CVD+Elev+SdHa
+CVD~SdHa
+SR~SdHa
+SdHa~Elev'
+fit1 <- sem(model1,data=Dataset1)
+summary(fit1)
+parameterEstimates(fit1, standardized=TRUE, rsq=TRUE)
+summary(fit1, fit.measures=TRUE)
+fitMeasures(fit1, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela1 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ c*SR
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+SR ~ g*SdHa
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+gc := g*c
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (g*c)+(h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (g*c)+(h*d)'
+
+fita1 <- sem(modela1, data = Dataset1)
+summary(fita1)
+summary(fita1, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita1, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita1, c("cfi","gfi", "srmr", "AIC"))
+
+
+###################
+Dataset2 <- Dataset[ which(Dataset$Foresttype =="Dense Mixed Forest"), ]
+
+model2 <- '#regressions
+AGB~SR+CVD+Elev+SdHa
+CVD~SdHa
+SR~SdHa
+SdHa~Elev'
+fit2 <- sem(model2,data=Dataset2)
+summary(fit2)
+parameterEstimates(fit2, standardized=TRUE, rsq=TRUE)
+summary(fit2, fit.measures=TRUE)
+fitMeasures(fit2, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela2 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ c*SR
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+SR ~ g*SdHa
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+gc := g*c
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (g*c)+(h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (g*c)+(h*d)'
+
+fita2 <- sem(modela2, data = Dataset2)
+summary(fita2)
+summary(fita2, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita2, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita2, c("cfi","gfi", "srmr", "AIC"))
+
+
+#################
+Dataset3 <- Dataset[ which(Dataset$Foresttype =="Sparse Mixed Forest"), ]
+
+model3 <- '#regressions
+AGB~SR+CVD+Elev+SdHa
+CVD~SdHa
+SR~SdHa
+SdHa~Elev'
+fit3 <- sem(model3,data=Dataset3)
+summary(fit3)
+parameterEstimates(fit3, standardized=TRUE, rsq=TRUE)
+summary(fit3, fit.measures=TRUE)
+fitMeasures(fit3, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela3 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ c*SR
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+SR ~ g*SdHa
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+gc := g*c
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (g*c)+(h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (g*c)+(h*d)'
+
+fita3 <- sem(modela3, data = Dataset3)
+summary(fita3)
+summary(fita3, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita3, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita3, c("cfi","gfi", "srmr", "AIC"))
+
+##################
+Dataset4 <- Dataset[ which(Dataset$Foresttype =="Sparse Pure Broadleaved Forest"), ]
+
+model4 <- '#regressions
+AGB~SR+CVD+Elev+SdHa
+CVD~SdHa
+SR~SdHa
+SdHa~Elev'
+fit4 <- sem(model4,data=Dataset4)
+summary(fit4)
+parameterEstimates(fit4, standardized=TRUE, rsq=TRUE)
+summary(fit4, fit.measures=TRUE)
+fitMeasures(fit4, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela4 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ c*SR
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+SR ~ g*SdHa
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+gc := g*c
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (g*c)+(h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (g*c)+(h*d)'
+
+fita4 <- sem(modela4, data = Dataset4)
+summary(fita4)
+summary(fita4, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita4, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita4, c("cfi","gfi", "srmr", "AIC"))
+
+##################
+Dataset5 <- Dataset[ which(Dataset$Foresttype =="Sparse Pure Conifer Forest"), ]
+
+model5 <- '#regressions
+AGB~SR+CVD+Elev+SdHa
+CVD~SdHa
+SR~SdHa
+SdHa~Elev'
+fit5 <- sem(model5,data=Dataset5)
+summary(fit5)
+parameterEstimates(fit5, standardized=TRUE, rsq=TRUE)
+summary(fit5, fit.measures=TRUE)
+fitMeasures(fit5, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela5 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ c*SR
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+SR ~ g*SdHa
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+gc := g*c
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (g*c)+(h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (g*c)+(h*d)'
+
+fita5 <- sem(modela5, data = Dataset5)
+summary(fita5)
+summary(fita5, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita5, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita5, c("cfi","gfi", "srmr", "AIC"))
+
+##################
+Dataset6 <- Dataset[ which(Dataset$Foresttype =="Dense Pure Broadleaved Forest"), ]
+
+model6 <- '#regressions
+AGB~SR+CVD+Elev+SdHa
+CVD~SdHa
+SR~SdHa
+SdHa~Elev'
+fit6 <- sem(model6,data=Dataset6)
+summary(fit6)
+parameterEstimates(fit6, standardized=TRUE, rsq=TRUE)
+summary(fit6, fit.measures=TRUE)
+fitMeasures(fit6, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela6 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ c*SR
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+SR ~ g*SdHa
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+gc := g*c
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (g*c)+(h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (g*c)+(h*d)'
+
+fita6 <- sem(modela6, data = Dataset6)
+summary(fita6)
+summary(fita6, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita6, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita6, c("cfi","gfi", "srmr", "AIC"))
+
+########The effects of Species mixture (Fig. 5)##########################
+
+Dataset7 <- Dataset[ which(Dataset$SPP =="Single SPP"), ]
+
+model7 <- '#regressions
+AGB~CVD+Elev+SdHa
+CVD~SdHa
+SdHa~Elev'
+fit7 <- sem(model7,data=Dataset7)
+summary(fit7)
+parameterEstimates(fit7, standardized=TRUE, rsq=TRUE)
+summary(fit7, fit.measures=TRUE)
+fitMeasures(fit7, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela7 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b +(h*d)'
+
+fita7 <- sem(modela7, data = Dataset7)
+summary(fita7)
+summary(fita7, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita7, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita7, c("cfi","gfi", "srmr", "AIC"))
+
+####################
+Dataset8 <- Dataset[ which(Dataset$SPP =="Multiple SPP"), ]
+
+model8 <- '#regressions
+AGB~CVD+Elev+SdHa
+CVD~SdHa
+SdHa~Elev'
+fit8 <- sem(model8,data=Dataset8)
+summary(fit8)
+parameterEstimates(fit8, standardized=TRUE, rsq=TRUE)
+summary(fit8, fit.measures=TRUE)
+fitMeasures(fit8, c("cfi","gfi", "srmr", "AIC"))
+
+# Direct, indirect and total standardized effects###
+modela8 <- '#  direct effect
+AGB ~ a*Elev
+AGB ~ b*SdHa
+AGB ~ d*CVD
+
+# mediator
+SdHa ~ f*Elev
+CVD ~ h*SdHa
+
+# indirect effect
+fb := f*b
+hd := h*d
+
+# indirect effect
+indirectElevation := (f*b)
+indirectSdHa := (h*d)
+# total effect
+totalElevation := a + (f*b)
+totalSdHa := b + (h*d)'
+
+fita8 <- sem(modela8, data = Dataset8)
+summary(fita8)
+summary(fita8, standardized=TRUE, rsq=TRUE)
+parameterEstimates(fita8, standardized=TRUE, rsq=TRUE)
+fitMeasures(fita8, c("cfi","gfi", "srmr", "AIC"))
+
+
+###########################################################################################
+###########Uploded Dataset provide in sheet 3 of Appendix B(CSV formate recommended#######
+###########Barchart in Fig. 4#############################################################
+
+#####################Dataset1 <- Dataset[ which(Dataset$Foresttype =="Dense Pure Conifer Forest"), ]
+
+Fig.a <- aggregate(cbind(Elev, SdHa, SR, CVD)~Effect , data=Dataset1 , mean)
+rownames(Fig.a) <- Fig.a[,1]
+Fig.a <- as.matrix(Fig.a[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.a)
+SEa<- aggregate(cbind(Elev1, SdHa1, SR1, CVD1)~Effect, data=Dataset1 , mean)
+rownames(SEa) <- SEa[,1]
+SEa <- as.matrix(SEa [,-1])
+ze_barplot <- barplot(Fig.a, beside=T , legend.text=T,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "a) Dense Pure Conifer Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.a, SEa) 
+
+#######################Dataset2 <- Dataset[ which(Dataset$Foresttype =="Dense Mixed Forest"), ]
+
+Fig.b <- aggregate(cbind(Elev, SdHa, SR, CVD)~Effect , data=Dataset2 , mean)
+rownames(Fig.b) <- Fig.b[,1]
+Fig.b <- as.matrix(Fig.b[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.b)
+SEb<- aggregate(cbind(Elev1, SdHa1, SR1, CVD1)~Effect, data=Dataset2 , mean)
+rownames(SEb) <- SEb[,1]
+SEb <- as.matrix(SEb [,-1])
+ze_barplot <- barplot(Fig.b, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "b) Dense Mixed Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.b, SEb)
+
+#########################Dataset3 <- Dataset[ which(Dataset$Foresttype =="Sparse Mixed Forest"), ]
+
+Fig.c <- aggregate(cbind(Elev, SdHa, SR, CVD)~Effect , data=Dataset3 , mean)
+rownames(Fig.c) <- Fig.c[,1]
+Fig.c <- as.matrix(Fig.c[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.c)
+SEc<- aggregate(cbind(Elev1, SdHa1, SR1, CVD1)~Effect, data=Dataset3 , mean)
+rownames(SEc) <- SEc[,1]
+SEc <- as.matrix(SEc [,-1])
+ze_barplot <- barplot(Fig.c, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "c) Sparse Mixed Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.c, SEc)
+
+###########################Dataset4 <- Dataset[ which(Dataset$Foresttype =="Sparse Pure Broadleaved Forest"), ]
+
+Fig.d <- aggregate(cbind(Elev, SdHa, SR, CVD)~Effect , data=Dataset4 , mean)
+rownames(Fig.d) <- Fig.d[,1]
+Fig.d <- as.matrix(Fig.d[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.d)
+SEd<- aggregate(cbind(Elev1, SdHa1, SR1, CVD1)~Effect, data=Dataset4 , mean)
+rownames(SEd) <- SEd[,1]
+SEd <- as.matrix(SEd [,-1])
+ze_barplot <- barplot(Fig.d, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "d) Sparse Pure Broadleaved Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.d, SEd)
+
+##############################Dataset5 <- Dataset[ which(Dataset$Foresttype =="Sparse Pure Conifer Forest"), ]
+
+Fig.e <- aggregate(cbind(Elev, SdHa, SR, CVD)~Effect , data=Dataset5 , mean)
+rownames(Fig.e) <- Fig.e[,1]
+Fig.e <- as.matrix(Fig.e[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.e)
+SEe<- aggregate(cbind(Elev1, SdHa1, SR1, CVD1)~Effect, data=Dataset5 , mean)
+rownames(SEe) <- SEe[,1]
+SEe <- as.matrix(SEe [,-1])
+ze_barplot <- barplot(Fig.e, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "e) Sparse Pure Conifer Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.e, SEe)
+
+#################################Dataset6 <- Dataset[ which(Dataset$Foresttype =="Dense Pure Broadleaved Forest"), ]
+
+Fig.f <- aggregate(cbind(Elev, SdHa, SR, CVD)~Effect , data=Dataset6 , mean)
+rownames(Fig.f) <- Fig.f[,1]
+Fig.f <- as.matrix(Fig.f[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.f)
+SEf<- aggregate(cbind(Elev1, SdHa1, SR1, CVD1)~Effect, data=Dataset6 , mean)
+rownames(SEf) <- SEf[,1]
+SEf <- as.matrix(SEf [,-1])
+ze_barplot <- barplot(Fig.f, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "f) Dense Pure Broadleaved Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.f, SEf)
+
+
+###########Uploded Dataset provide in sheet 4 of Appendix B(CSV formate recommended############
+###########Barchat effect in Fig. 6 ################################################
+
+##################################Dataset7 <- Dataset[ which(Dataset$SPP =="Single-specie"), ]
+
+Fig.g <- aggregate(cbind(Elev, SdHa, CVD)~Effect , data=Dataset7 , mean)
+rownames(Fig.g) <- Fig.g[,1]
+Fig.g <- as.matrix(Fig.g[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.g)
+SEg<- aggregate(cbind(Elev1, SdHa1,  CVD1)~Effect, data=Dataset7 , mean)
+rownames(SEg) <- SEg[,1]
+SEg <- as.matrix(SEg [,-1])
+ze_barplot <- barplot(Fig.g, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "a) Single-species Forests", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.g, SEg)
+
+###################################Dataset8 <- Dataset[ which(Dataset$SPP =="Multi-species"), ]
+
+Fig.h <- aggregate(cbind(Elev, SdHa,  CVD)~Effect , data=Dataset8 , mean)
+rownames(Fig.h) <- Fig.h[,1]
+Fig.h <- as.matrix(Fig.h[,-1])
+#Plot boundaries
+lim <- 1.2*max(Fig.h)
+SEh<- aggregate(cbind(Elev1, SdHa1, CVD1)~Effect, data=Dataset8 , mean)
+rownames(SEh) <- SEh[,1]
+SEh <- as.matrix(SEh [,-1])
+ze_barplot <- barplot(Fig.h, beside=T , legend.text=F,col=c("black" , "gray") , ylim=c(-1,1) , ylab="Standardized coefficient",  xlab="Predictor", main = "b) Multi-species Forest", cex.axis=2, cex.names=2, cex.lab=2, cex.main=2.5)
+error.bar(ze_barplot,Fig.h, SEh)
+
+################Foresttypes#################################################################
+###########Uploded Dataset provide in sheet 1 of Appendix B(CSV formate recommended#######
+###########Boxplots in Fig. 5 ###########################################################
+
+
+p1 <- ggplot(Dataset, aes(SR, Foresttype))
+p1 <- p1 + geom_boxplot()+
+  geom_boxplot() +
+ 
+  labs( x = "Species richness", y = "Forest types") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+p2 <- ggplot(Dataset, aes(CVD, Foresttype))
+p2 <- p2 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Tree DBH variation (%)", y = "Forest types") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+p3 <- ggplot(Dataset, aes(SdHa, Foresttype))
+p3 <- p3 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Stand density (n/ha)", y = "Forest types") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+
+p4 <- ggplot(Dataset, aes(AGB, Foresttype))
+p4 <- p4 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Aboveground biomass (Mg/ha)", y = "Forest types") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+p5 <- ggplot(Dataset, aes(Elev, Foresttype))
+p5 <- p5 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Elevation (m)", y = "Forest types") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+jpeg("Figure for Ali11.jpeg", units="cm", width=50, height=35, quality=100, res=350)
+plot_grid(p1, p2, p3, p4,p5, ncol=2, labels ="auto", label_size = 30, vjust = 0.89)
+dev.off()
+
+###########Species mixture###############################################################
+###########Uploded Dataset provide in sheet 1 of Appendix B(CSV formate recommended#####
+###########Boxplots in Fig. 7 #########################################################
+
+
+p1 <- ggplot(Dataset, aes(SR, SPP))
+p1 <- p1 + geom_boxplot()+
+  geom_boxplot() +
+ 
+  labs( x = "Species richness", y = "Species mixture") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+p2 <- ggplot(Dataset, aes(CVD, SPP))
+p2 <- p2 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Tree DBH variation (%)", y = "Species mixture") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+p3 <- ggplot(Dataset, aes(SdHa, SPP))
+p3 <- p3 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Stand density (n/ha)", y = "Species mixture") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+
+p4 <- ggplot(Dataset, aes(AGB, SPP))
+p4 <- p4 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Aboveground biomass (Mg/ha)", y = "Species mixture") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+p5 <- ggplot(Dataset, aes(Elev, SPP))
+p5 <- p5 + geom_boxplot()+
+  geom_boxplot() +
+  
+  labs( x = "Elevation (m)", y = "Species mixture") +
+  
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
+    axis.text.x  = element_text(size=20, angle = 90),
+    axis.text.y  = element_text(size=20))
+
+jpeg("Figure for Ali111.jpeg", units="cm", width=50, height=35, quality=100, res=350)
+plot_grid(p1, p2, p3, p4,p5, ncol=2, labels ="auto", label_size = 30, vjust = 0.89)
+dev.off()
+
+######################################################################################
+#########Uploded Dataset provide in sheet 2 of Appendix B(CSV formate recommended##
+#########Correlation matrix Fig. S1#################################################
+
+# Compute a correlation matrix
+corr <- round(cor(Dataset), 2)
+# Visualize
+p1 <- ggcorrplot(corr, p.mat = cor_pmat(Dataset), lab_size = 12,pch.col="red", pch.cex = 22,
+                 hc.order = FALSE, type = "lower",legend.title = "Pearson\nCorrelation",
+                 color = c("red", "white", "green"), tl.srt = 90,
+                 outline.col = "white", digits=3,  sig.level = 0.05, lab = TRUE,ggtheme = ggplot2::theme_classic())
+jpeg("Figure correlation for rangeland NAHAEI.jpeg", units="cm", width=40, height=40, quality=100, res=500)
+
+p1+theme(
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  panel.grid.major = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.ticks = element_blank(),
+  legend.justification = c(1, 0),
+  legend.position = c(0.5, 0.8),
+  legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 15, barheight = 2,
+                               title.position = "top", title.hjust = 0.5))+theme(plot.title = element_text(size = 20, face = "bold"),
+                                                                                 legend.title=element_text(size=22), 
+                                                                                 legend.text=element_text(size=22))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, 
+                                   size = 35, hjust = 1))+
+  theme(axis.text.y = element_text(vjust = 1, 
+                                   size = 35, hjust = 1))
+dev.off()
+
+################################################################################################
+##########Uploded Dataset provide in sheet 2 of Appendix B(CSV formate recommended#############
+###########Bivaraite in Fig. S3, & S4 ###########################################################
+
+
+jpeg("6a.jpeg", units="cm", width=40, height=40, pointsize=20, quality=100, res=180) 
+
+Fig.5a <- ggplot(Dataset, aes(x=SdHa,y=SR, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()                                              
+Fig.5a <- Fig.5a+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))+ylab(expression(paste(italic("ln "), "(Species richness)")))
+Fig.5a <- Fig.5a+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5a <- Fig.5a+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5b <- ggplot(Dataset, aes(x=SdHa,y=CVD, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5b <- Fig.5b+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))+ylab(expression(paste(italic("ln "), "(Tree DBH variation, %) ")))
+Fig.5b <- Fig.5b+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5b <- Fig.5b+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5c <- ggplot(Dataset, aes(x=SdHa,y=AGB, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5c <- Fig.5c+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))+ylab(expression(paste(italic("ln "), "(AGB, Mg ", ha^-1,") ")))
+Fig.5c <- Fig.5c+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5c <- Fig.5c+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5d <- ggplot(Dataset, aes(x=SR,y=AGB, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5d <- Fig.5d+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Species richness)")))+ylab(expression(paste(italic("ln "), "(AGB, Mg ", ha^-1,")")))
+Fig.5d <- Fig.5d+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5d <- Fig.5d+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5e <- ggplot(Dataset, aes(x=CVD,y=AGB, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5e <- Fig.5e+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Tree DBH variation, %)")))+ylab(expression(paste(italic("ln "), "(AGB, Mg ", ha^-1,")")))
+Fig.5e <- Fig.5e+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5e <- Fig.5e+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5f <- ggplot(Dataset, aes(x=Elev,y=AGB, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5f <- Fig.5f+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Elevation, m)")))+ylab(expression(paste(italic("ln "), "(AGB, Mg " ,  ha^-1, ")")))
+Fig.5f <- Fig.5f+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5f <- Fig.5f+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5g <- ggplot(Dataset, aes(x=Elev,y=SdHa, colour=factor(Foresttype),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+    geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5g <- Fig.5g+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Elevation, m)")))+ylab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))
+Fig.5g <- Fig.5g+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5g <- Fig.5g+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="TRUE")
+
+plot_grid(Fig.5a, Fig.5b, Fig.5c, Fig.5d, Fig.5e, Fig.5f, Fig.5g,  ncol=3, labels ="auto", label_size = 30, vjust = 0.89) 
+dev.off()
+
+jpeg("6b.jpeg", units="cm", width=40, height=40, pointsize=20, quality=100, res=180) 
+Fig.5h <- ggplot(Dataset, aes(x=SdHa,y=CVD, colour=factor(SPP),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+  geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5h <- Fig.5h+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))+ylab(expression(paste(italic("ln "), "(Tree DBH variation, %)")))
+Fig.5h <- Fig.5h+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5h <- Fig.5h+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5i <- ggplot(Dataset, aes(x=SdHa,y=AGB, colour=factor(SPP),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+  geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5i <- Fig.5i+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))+ylab(expression(paste(italic("ln "), "(AGB, Mg " ,  ha^-1, ")")))
+Fig.5i <- Fig.5i+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5i <- Fig.5i+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5j <- ggplot(Dataset, aes(x=CVD,y=AGB, colour=factor(SPP),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+  geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5j <- Fig.5j+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Tree DBH variation, %)")))+ylab(expression(paste(italic("ln "), "(AGB, Mg " ,  ha^-1, ")")))
+Fig.5j <- Fig.5j+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5j <- Fig.5j+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+
+Fig.5k <- ggplot(Dataset, aes(x=Elev,y=AGB, colour=factor(SPP),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+  geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5k <- Fig.5k+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Elevation, m)")))+ylab(expression(paste(italic("ln "), "(AGB, Mg " ,  ha^-1, ")")))
+Fig.5k <- Fig.5k+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5k <- Fig.5k+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+Fig.5l <- ggplot(Dataset, aes(x=Elev,y=SdHa, colour=factor(SPP),alpha = 0.5),scale_shape_identity()) +geom_point(size=8)+
+  geom_smooth(method = 'lm', se = FALSE)+theme_classic()
+Fig.5l <- Fig.5l+geom_smooth(method="lm", se=T, color="black", size=1.5, linetype=1)+xlab(expression(paste(italic("ln "), "(Elevation, m)")))+ylab(expression(paste(italic("ln "), "(SdHa, n ", ha^-1,")")))
+Fig.5l <- Fig.5l+theme( axis.line = element_line(colour = "black", size = 3, linetype = "solid"))+theme(axis.ticks = element_line(colour = "black", size = 2))
+Fig.5l <- Fig.5l+theme(axis.text = element_text(size=25, colour = "black"),axis.text.x  = element_text(size=25))+theme(axis.text=element_text(size=25), axis.title=element_text(size=25))+theme( axis.line = element_line(colour = "black", size = 2, linetype = "solid"))+theme(legend.position="none")
+
+plot_grid(Fig.5h, Fig.5i, Fig.5j, Fig.5k, Fig.5l,  ncol=3, labels ="auto", label_size = 30, vjust = 0.89) 
+dev.off()
+##########################################################################################################################################################
+
+
+
+
